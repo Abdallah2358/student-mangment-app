@@ -20,9 +20,9 @@ return new class extends Migration
             $table->integer('guardian_relation')->default(1);// 1: father, 2: mother, 3: other
             $table->string('address')->nullable();
             $table->string('class');
-            $table->integer('sex')->default(0); // 0: male , 1:female
+            $table->boolean('sex')->default(0); // 0: male , 1:female
             $table->string('notes')->nullable();
-            $table->integer('status')->default(1); // 0: active, 1:inactive, graduated
+            $table->tinyInteger('status')->default(GraduationStatusEnum::ACTIVE); // 0: active, 1: inactive, graduated
             $table->timestamps();
         });
     }

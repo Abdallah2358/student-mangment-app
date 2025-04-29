@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('teacher_id')->constrained();
             $table->date('joined_at')->nullable();
             $table->date('left_at')->nullable();
-            $table->tinyInteger('status')->default(1); // active, inactive, graduated
+            $table->tinyInteger('status')->default(GraduationStatusEnum::ACTIVE); // 0: active, 1: inactive, graduated
             $table->timestamps();
         });
     }

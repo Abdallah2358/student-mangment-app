@@ -25,7 +25,7 @@ return new class extends Migration
             $table->time('start_time');
             $table->string('days'); // Comma-separated days of the week (e.g., "Monday,Wednesday,Friday")
             $table->string('location')->nullable(); // Location of the class
-            $table->string('status')->default('active'); // active, inactive
+            $table->tinyInteger('status')->default(GraduationStatusEnum::ACTIVE); // 0: active, 1: inactive, graduated
             $table->string('description')->nullable();
             $table->timestamps();
 
