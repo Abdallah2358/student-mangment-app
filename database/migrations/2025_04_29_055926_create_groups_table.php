@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\GraduationStatusEnum;
 use App\Models\Teacher;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -26,7 +27,8 @@ return new class extends Migration
             $table->time('start_time');
             $table->string('days'); // Comma-separated days of the week (e.g., "Monday,Wednesday,Friday")
             $table->string('location')->nullable(); // Location of the class
-            $table->tinyInteger('status')->default(GraduationStatusEnum::ACTIVE); // 0: active, 1: inactive, graduated
+            $table->tinyInteger('status')->default(GraduationStatusEnum::ACTIVE->value); // 0: active, 1: inactive, graduated
+            // $table->tinyInteger('status')->default(0); // 0: active, 1: inactive, graduated
             $table->string('description')->nullable();
             $table->timestamps();
 
