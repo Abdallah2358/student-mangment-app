@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attendances', function (Blueprint $table) {
+        Schema::create('group_student', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('group_id')->constrained();
             $table->foreignId('student_id')->constrained();
             $table->foreignId('teacher_id')->constrained();
-            $table->foreignId('group_id')->constrained();
-            $table->date('date');
-            $table->time('check_in_time')->nullable();
-            $table->time('check_out_time')->nullable();
-            $table->tinyInteger('status', )->default(1); // 1: present, 0: absent, 2: late
-            $table->string('notes')->nullable(); // Additional notes for the attendance
+            $table->date('joined_at')->nullable();
+            $table->date('left_at')->nullable();
+            $table->tinyInteger('status')->default(1); // active, inactive, graduated
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attendances');
+        Schema::dropIfExists('group_student');
     }
 };
