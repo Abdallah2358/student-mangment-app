@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Group;
+use App\Models\Lesson;
 use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Database\Migrations\Migration;
@@ -17,12 +18,11 @@ return new class extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Student::class);
-            $table->foreignId(Teacher::class);
-            $table->foreignId(Group::class);
+            $table->foreignIdFor(Lesson::class);
             $table->date('date');
             $table->time('check_in_time')->nullable();
             $table->time('check_out_time')->nullable();
-            $table->tinyInteger('status', )->default(1); // 1: present, 0: absent, 2: late
+            $table->tinyInteger('status',)->default(1); // 1: present, 0: absent, 2: late
             $table->string('notes')->nullable(); // Additional notes for the attendance
             $table->timestamps();
         });
