@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\RolesEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,6 +18,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('phone')->nullable();
+            $table->string('address')->nullable();
+            $table->tinyInteger('role')->default(RolesEnum::TEACHER);
             $table->rememberToken();
             $table->timestamps();
         });
