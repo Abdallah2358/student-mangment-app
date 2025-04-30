@@ -55,7 +55,25 @@ class StudentResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('sex')
+                    ->label('Sex')
+                    ->formatStateUsing(fn(SexEnum $state) => $state->getLabel())
+                    ->color(fn(SexEnum $state) => $state->getColor())
+                    ->sortable(),
+                TextColumn::make('class')->sortable(),
+                TextColumn::make('guardian_name')->label('Guardian')->searchable(),
+                TextColumn::make('guardian_phone')->label('Guardian Phone'),
+                TextColumn::make('guardian_relation')
+                    ->label('Relation')
+                    ->formatStateUsing(fn(GuardianRelationEnum $state) => $state->getLabel())
+                    ->color(fn(GuardianRelationEnum $state) => $state->getColor()),
+                TextColumn::make('status')
+                    ->formatStateUsing(fn(GraduationStatusEnum $state) => $state->getLabel())
+                    ->color(fn(GraduationStatusEnum $state) => $state->getColor())
+                    ->sortable(),
+
+                TextColumn::make('created_at')->dateTime()->sortable(),
             ])
             ->filters([
                 //
@@ -87,5 +105,8 @@ class StudentResource extends Resource
             'edit' => Pages\EditStudent::route('/{record}/edit'),
         ];
     }
- 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('teacher_id', Auth::user()->teacher->id);
+    }
 }

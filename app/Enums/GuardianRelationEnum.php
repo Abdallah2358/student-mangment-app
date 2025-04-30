@@ -2,7 +2,7 @@
 // app/Enums/GuardianRelationEnum.php
 namespace App\Enums;
 
-enum GuardianRelationEnum: int 
+enum GuardianRelationEnum: int
 {
     case Father = 1;
     case Mother = 2;
@@ -14,6 +14,14 @@ enum GuardianRelationEnum: int
             self::Father => 'Father',
             self::Mother => 'Mother',
             self::Other => 'Other',
+        };
+    }
+    public function getColor(): string | array | null
+    {
+        return match ($this) {
+            self::Father => 'info',
+            self::Mother => 'pink',
+            self::Other => 'warning',
         };
     }
 }
