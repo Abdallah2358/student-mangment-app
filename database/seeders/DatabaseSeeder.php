@@ -34,11 +34,6 @@ class DatabaseSeeder extends Seeder
             'phone' => '1234567890',
             'address' => '123 Main St',
 
-        ]);
-        Teacher::create(
-            [
-                'user_id' => 1,
-            ]
-        );
+        ])->teacher()->create();
     }
 }
