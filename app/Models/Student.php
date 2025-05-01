@@ -18,4 +18,8 @@ class Student extends Model
     {
         return $this->belongsToMany(Group::class, 'group_student');
     }
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class);
+    }
 }

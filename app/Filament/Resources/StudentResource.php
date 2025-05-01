@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\{TextInput, Select, Textarea, Toggle};
 use Filament\Tables\Columns\{TextColumn, BadgeColumn};
-use App\Enums\{SexEnum, GuardianRelationEnum, GraduationStatusEnum};
+use App\Enums\{SexEnum, GuardianRelationEnum, GraduationStatusEnum, RolesEnum};
 use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,54 +27,72 @@ class StudentResource extends Resource
     public static function form(Form $form): Form
     {
 
-        return $form
-            ->schema([
-                TextInput::make('name')->required(),
-                TextInput::make('phone'),
-                TextInput::make('guardian_name')->required(),
-                TextInput::make('guardian_phone')->required(),
-                Select::make('guardian_relation')
-                    ->options(collect(GuardianRelationEnum::cases())
-                        ->mapWithKeys(fn($r) => [$r->value => $r->getLabel()]))
-                    ->required(),
-                TextInput::make('address'),
-                TextInput::make('class')->required(),
-                Select::make('sex')
-                    ->options(collect(SexEnum::cases())
-                        ->mapWithKeys(fn($s) => [$s->value => $s->getLabel()]))
-                    ->required(),
-                Textarea::make('notes'),
-                Select::make('status')
-                    ->options(collect(GraduationStatusEnum::cases())
-                        ->mapWithKeys(fn($s) => [$s->value => $s->getLabel()]))
+        $components = [
+            TextInput::make('name')->required(),
+            TextInput::make('phone'),
+            TextInput::make('guardian_name')->required(),
+            TextInput::make('guardian_phone')->required(),
+            Select::make('guardian_relation')
+                ->options(collect(GuardianRelationEnum::cases())
+                    ->mapWithKeys(fn($r) => [$r->value => $r->getLabel()]))
+                ->required(),
+            TextInput::make('address'),
+            TextInput::make('class')->required(),
+            Select::make('sex')
+                ->options(collect(SexEnum::cases())
+                    ->mapWithKeys(fn($s) => [$s->value => $s->getLabel()]))
+                ->required(),
+            Textarea::make('notes'),
+            Select::make('status')
+                ->options(collect(GraduationStatusEnum::cases())
+                    ->mapWithKeys(fn($s) => [$s->value => $s->getLabel()]))
+                ->required(),
+        ];
+        if (Auth::user()->role === RolesEnum::ADMIN) {
+            array_splice($components, 1, 0, [
+                Select::make('teacher_id')
+                    ->relationship('teacher', 'id')
+                    ->getOptionLabelFromRecordUsing(fn($record) => $record->user->name)
+                    ->preload()
                     ->required(),
             ]);
+        }
+        return   $form->schema($components);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                TextColumn::make('name')->searchable()->sortable(),
-                TextColumn::make('sex')
-                    ->label('Sex')
-                    ->formatStateUsing(fn(SexEnum $state) => $state->getLabel())
-                    ->color(fn(SexEnum $state) => $state->getColor())
-                    ->sortable(),
-                TextColumn::make('class')->sortable(),
-                TextColumn::make('guardian_name')->label('Guardian')->searchable(),
-                TextColumn::make('guardian_phone')->label('Guardian Phone'),
-                TextColumn::make('guardian_relation')
-                    ->label('Relation')
-                    ->formatStateUsing(fn(GuardianRelationEnum $state) => $state->getLabel())
-                    ->color(fn(GuardianRelationEnum $state) => $state->getColor()),
-                TextColumn::make('status')
-                    ->formatStateUsing(fn(GraduationStatusEnum $state) => $state->getLabel())
-                    ->color(fn(GraduationStatusEnum $state) => $state->getColor())
-                    ->sortable(),
 
-                TextColumn::make('created_at')->dateTime()->sortable(),
-            ])
+        $user = Auth::user();
+        $teacherCol = new TextColumn('');
+        if ($user->role === RolesEnum::ADMIN) {
+            $teacherCol = TextColumn::make('teacher.user.name')->label('Teacher')->sortable();
+        }
+        $components = [
+            TextColumn::make('name')->searchable()->sortable(),
+            $teacherCol,
+            TextColumn::make('sex')
+                ->label('Sex')
+                ->formatStateUsing(fn(SexEnum $state) => $state->getLabel())
+                ->color(fn(SexEnum $state) => $state->getColor())
+                ->sortable(),
+            TextColumn::make('class')->sortable(),
+            TextColumn::make('guardian_name')->label('Guardian')->searchable(),
+            TextColumn::make('guardian_phone')->label('Guardian Phone'),
+            TextColumn::make('guardian_relation')
+                ->label('Relation')
+                ->formatStateUsing(fn(GuardianRelationEnum $state) => $state->getLabel())
+                ->color(fn(GuardianRelationEnum $state) => $state->getColor()),
+            TextColumn::make('status')
+                ->formatStateUsing(fn(GraduationStatusEnum $state) => $state->getLabel())
+                ->color(fn(GraduationStatusEnum $state) => $state->getColor())
+                ->sortable(),
+
+            TextColumn::make('created_at')->dateTime()->sortable(),
+        ];
+
+        return $table
+            ->columns($components)
             ->filters([
                 //
             ])
@@ -107,6 +125,11 @@ class StudentResource extends Resource
     }
     public static function getEloquentQuery(): Builder
     {
+        $user = Auth::user();
+
+        if ($user->role === RolesEnum::ADMIN) {
+            return parent::getEloquentQuery();
+        }
         return parent::getEloquentQuery()->where('teacher_id', Auth::user()->teacher->id);
     }
 }
