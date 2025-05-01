@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Enums;
+
 use Filament\Support\Contracts\{HasLabel, HasColor};
 
 enum LessonTypeEnum: int implements HasLabel, HasColor
