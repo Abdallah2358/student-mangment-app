@@ -3,7 +3,7 @@
 namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
-enum SexEnum: int implements HasLabel, HasColor
+enum GenderEnum: int implements HasLabel, HasColor
 {
     case MALE = 0;
     case FEMALE = 1;

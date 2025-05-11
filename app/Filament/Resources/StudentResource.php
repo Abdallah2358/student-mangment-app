@@ -6,6 +6,7 @@ use App\Filament\Resources\StudentResource\Pages;
 use App\Filament\Resources\StudentResource\RelationManagers;
 use App\Models\Student;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\{TextInput, Select, Textarea, Toggle};
 use Filament\Tables\Columns\{TextColumn, BadgeColumn};
-use App\Enums\{SexEnum, GuardianRelationEnum, GraduationStatusEnum, RolesEnum};
+use App\Enums\{GenderEnum, GuardianRelationEnum, GraduationStatusEnum, RolesEnum};
 use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,9 +38,15 @@ class StudentResource extends Resource
                     ->mapWithKeys(fn($r) => [$r->value => $r->getLabel()]))
                 ->required(),
             TextInput::make('address'),
+            DatePicker::make('birth_date')
+                ->label('Birth Date')
+                ->required(),
+            DatePicker::make('enrollment_date')
+                ->label('Enrollment Date')
+                ->required(),
             TextInput::make('class')->required(),
-            Select::make('sex')
-                ->options(collect(SexEnum::cases())
+            Select::make('gender')
+                ->options(collect(GenderEnum::cases())
                     ->mapWithKeys(fn($s) => [$s->value => $s->getLabel()]))
                 ->required(),
             Textarea::make('notes'),
@@ -71,10 +78,14 @@ class StudentResource extends Resource
         $components = [
             TextColumn::make('name')->searchable()->sortable(),
             $teacherCol,
-            TextColumn::make('sex')
-                ->label('Sex')
-                ->formatStateUsing(fn(SexEnum $state) => $state->getLabel())
-                ->color(fn(SexEnum $state) => $state->getColor())
+            TextColumn::make('birth_date')
+                ->date()
+                ->label('Birth Date')
+                ->sortable(),
+            TextColumn::make('gender')
+                ->label('gender')
+                ->formatStateUsing(fn(GenderEnum $state) => $state->getLabel())
+                ->color(fn(GenderEnum $state) => $state->getColor())
                 ->sortable(),
             TextColumn::make('class')->sortable(),
             TextColumn::make('guardian_name')->label('Guardian')->searchable(),
@@ -87,8 +98,10 @@ class StudentResource extends Resource
                 ->formatStateUsing(fn(GraduationStatusEnum $state) => $state->getLabel())
                 ->color(fn(GraduationStatusEnum $state) => $state->getColor())
                 ->sortable(),
-
-            TextColumn::make('created_at')->dateTime()->sortable(),
+            TextColumn::make('enrollment_date')
+                ->date()
+                ->label('Enrollment Date')
+                ->sortable(),
         ];
 
         return $table

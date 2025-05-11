@@ -4,14 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use App\Enums\{SexEnum, GuardianRelationEnum, GraduationStatusEnum};
+use App\Enums\{GenderEnum, GuardianRelationEnum, GraduationStatusEnum};
 
 class Student extends Model
 {
     protected $casts = [
-        'sex' => SexEnum::class,
+        'gender' => GenderEnum::class,
         'guardian_relation' => GuardianRelationEnum::class,
         'status' => GraduationStatusEnum::class,
+        'birth_date' => 'date',
+        'enrollment_date' => 'date',
     ];
     //
     public function groups(): BelongsToMany
