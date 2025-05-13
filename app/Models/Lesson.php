@@ -24,4 +24,44 @@ class Lesson extends Model
     {
         return $this->belongsTo(Student::class);
     }
+
+    public function readSoraStart(): BelongsTo
+    {
+        return $this->belongsTo(Surah::class, 'read_sora_start_id');
+    }
+
+    public function readSoraEnd(): BelongsTo
+    {
+        return $this->belongsTo(Surah::class, 'read_sora_end_id');
+    }
+
+    public function hafzSoraStart(): BelongsTo
+    {
+        return $this->belongsTo(Surah::class, 'hafz_sora_start_id');
+    }
+
+    public function hafzSoraEnd(): BelongsTo
+    {
+        return $this->belongsTo(Surah::class, 'hafz_sora_end_id');
+    }
+
+    public function reviewNSoraStart(): BelongsTo
+    {
+        return $this->belongsTo(Surah::class, 'review_n_sora_start_id');
+    }
+
+    public function reviewNSoraEnd(): BelongsTo
+    {
+        return $this->belongsTo(Surah::class, 'review_n_sora_end_id');
+    }
+
+    public function reviewFSoraStart(): BelongsTo
+    {
+        return $this->belongsTo(Surah::class, 'review_f_sora_start_id');
+    }
+
+    public function reviewFSoraEnd(): BelongsTo
+    {
+        return $this->belongsTo(Surah::class, 'review_f_sora_end_id');
+    }
 }
