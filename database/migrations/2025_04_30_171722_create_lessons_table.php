@@ -52,7 +52,7 @@ return new class extends Migration
 
             $table->decimal('fee', 8, 2)->nullable(); // for reporting/billing
 
-            $table->integer('duration_minutes')->nullable(); // for reporting/billing
+            // $table->integer('duration_minutes')->nullable(); // for reporting/billing
             $table->timestamps();
         });
     }
