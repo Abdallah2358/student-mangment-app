@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\LessonTypeEnum;
+use App\Enums\SurahEnum;
 use App\Filament\Resources\LessonResource\Pages;
 use App\Filament\Resources\LessonResource\RelationManagers;
 use App\Models\Lesson;
@@ -10,6 +12,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 use Filament\Forms\Components\Select;
@@ -19,6 +22,9 @@ use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Eloquent\Builder;
 
 class LessonResource extends Resource
 {
@@ -53,15 +59,16 @@ class LessonResource extends Resource
                         ->relationship('student', 'name')
                         ->searchable()
                         ->nullable(),
-
                     Select::make('type')
                         ->label('نوع الدرس')
-                        ->options([
-                            1 => 'مجموعة',
-                            2 => 'فردي',
-                        ])
-                        ->default(1)
+                        ->options(LessonTypeEnum::class)
+                        ->searchable()
                         ->required(),
+                        
+                        // ->options(collect(LessonTypeEnum::cases())
+                        //     ->mapWithKeys(fn(LessonTypeEnum $r) => [$r->value => $r->getLabel()]))
+                        // ->required(),
+   
 
                     TextInput::make('topic')->label('الموضوع')->nullable(),
                     DatePicker::make('date')->label('التاريخ')->required(),
@@ -73,7 +80,8 @@ class LessonResource extends Resource
                 Section::make('القراءة')->schema([
                     Select::make('read_sora_start_id')
                         ->label('السورة من')
-                        ->relationship('readSoraStart', 'name')
+                        ->options(SurahEnum::class)
+                        // ->relationship('readSoraStart', 'name')
                         ->searchable()
                         ->preload()
                         ->nullable(),
@@ -82,7 +90,8 @@ class LessonResource extends Resource
 
                     Select::make('read_sora_end_id')
                         ->label('السورة إلى')
-                        ->relationship('readSoraEnd', 'name')
+                        ->options(SurahEnum::class)
+                        // ->relationship('readSoraEnd', 'name')
                         ->searchable()
                         ->preload()
                         ->nullable(),
@@ -130,11 +139,112 @@ class LessonResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('id')->label('ID')->sortable(),
+                TextColumn::make('teacher.user.name')
+                    ->label('المعلم')
+                    ->sortable()->searchable(),
+                TextColumn::make('student.name')->label('الطالب')->sortable()->searchable(),
+                TextColumn::make('group.name')->label('المجموعة')->sortable()->searchable(),
+                TextColumn::make('type')->label('نوع الدرس')
+                    // ->state(fn (LessonTypeEnum $s) => $s->name)
+                    // ->enum([
+                    //     1 => 'مجموعة',
+                    //     2 => 'فردي',
+                    // ])
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('date')->label('التاريخ')->date()->sortable(),
+                TextColumn::make('start_time')->label('بداية الدرس')->time()->sortable(),
+                TextColumn::make('end_time')->label('نهاية الدرس')->time()->sortable(),
+            ])->filters([
                 //
+                SelectFilter::make('teacher_id')
+                    ->relationship('teacher.user', 'name')
+                    ->label('المعلم')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('student_id')
+                    ->relationship('student', 'name')
+                    ->label('الطالب')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('group_id')
+                    ->relationship('group', 'name')
+                    ->label('المجموعة')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('type')
+                    ->label('نوع الدرس')
+                    ->options([
+                        1 => 'مجموعة',
+                        2 => 'فردي',
+                    ])
+                    ->multiple()
+                    ->preload(),
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('start_date')
+                            ->label('تاريخ البداية')
+                            ->placeholder('تاريخ البداية')
+                            ->required(),
+                        DatePicker::make('end_date')
+                            ->label('تاريخ النهاية')
+                            ->placeholder('تاريخ النهاية')
+                            ->required(),
+
+                    ])->query(function (Builder $query, array $data): Builder {
+                        if (!empty($data['start_date'])) {
+                            $query->whereDate('created_at', '>=', $data['start_date']);
+                        }
+
+                        if (!empty($data['end_date'])) {
+                            $query->whereDate('created_at', '<=', $data['end_date']);
+                        }
+                        return $query;
+                    })
+                    ->label('تاريخ الإنشاء'),
+                SelectFilter::make('read_sora_start_id')
+                    ->relationship('readSoraStart', 'name')
+                    ->label('السورة من')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('read_sora_end_id')
+                    ->relationship('readSoraEnd', 'name')
+                    ->label('السورة إلى')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('hafz_sora_start_id')
+                    ->relationship('hafzSoraStart', 'name')
+                    ->label('السورة من')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('hafz_sora_end_id')
+                    ->relationship('hafzSoraEnd', 'name')
+                    ->label('السورة إلى')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('review_n_sora_start_id')
+                    ->relationship('reviewNSoraStart', 'name')
+                    ->label('السورة من')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('review_n_sora_end_id')
+                    ->relationship('reviewNSoraEnd', 'name')
+                    ->label('السورة إلى')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('review_f_sora_start_id')
+                    ->relationship('reviewFSoraStart', 'name')
+                    ->label('السورة من')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('review_f_sora_end_id')
+                    ->relationship('reviewFSoraEnd', 'name')
+                    ->label('السورة إلى')
+                    ->multiple()
+                    ->preload(),
             ])
-            ->filters([
-                //
-            ])
+
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
