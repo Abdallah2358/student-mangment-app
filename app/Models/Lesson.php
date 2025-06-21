@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\LessonTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -11,6 +12,7 @@ class Lesson extends Model
     protected $casts = [
         'start_time' => 'datetime',
         'end_time' => 'datetime',
+        'type'=>LessonTypeEnum::class,
     ];
     public function group(): BelongsTo
     {
