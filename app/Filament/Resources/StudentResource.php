@@ -35,7 +35,7 @@ class StudentResource extends Resource
             TextInput::make('guardian_phone')->required(),
             Select::make('guardian_relation')
                 ->options(collect(GuardianRelationEnum::cases())
-                    ->mapWithKeys(fn($r) => [$r->value => $r->getLabel()]))
+                    ->mapWithKeys(fn(GuardianRelationEnum $r) => [$r->value => $r->getLabel()]))
                 ->required(),
             TextInput::make('address'),
             DatePicker::make('birth_date')
