@@ -1,8 +1,6 @@
 <?php
 
 return [
-
-    "group" => "Group",
     "lesson" => [
         "title" => "Lesson",
         "plural" => "Lessons",
@@ -50,6 +48,17 @@ return [
         "deleted" => "User deleted successfully",
         "created" => "User created successfully",
         "updated" => "User updated successfully",
+    ],
+    "group" => [
+        "title" => "Group",
+        "plural" => "Groups",
+        "create" => "Create New Group",
+        "edit" => "Edit Group",
+        "view" => "View Group",
+        "delete" => "Delete Group",
+        "deleted" => "Group deleted successfully",
+        "created" => "Group created successfully",
+        "updated" => "Group updated successfully",
     ],
 
     "read_sora_start" => "Read Sora Start",
