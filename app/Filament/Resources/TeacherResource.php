@@ -162,4 +162,13 @@ class TeacherResource extends Resource
     {
         return parent::getEloquentQuery()->with(['user']);
     }
+
+    public static function getLabel(): string
+    {
+        return __('index.teacher.title');
+    }
+    public static function getPluralLabel(): string
+    {
+        return __('index.teacher.plural');
+    }
 }

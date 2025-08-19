@@ -64,7 +64,7 @@ class StudentResource extends Resource
                     ->required(),
             ]);
         }
-        return   $form->schema($components);
+        return $form->schema($components);
     }
 
     public static function table(Table $table): Table
@@ -144,5 +144,15 @@ class StudentResource extends Resource
             return parent::getEloquentQuery();
         }
         return parent::getEloquentQuery()->where('teacher_id', Auth::user()->teacher->id);
+    }
+
+    public static function getLabel(): string
+    {
+        return __('index.student.title');
+    }
+
+    public static function getPluralLabel(): string
+    {
+        return __('index.student.plural');
     }
 }

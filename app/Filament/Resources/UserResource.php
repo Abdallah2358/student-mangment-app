@@ -111,4 +111,14 @@ class UserResource extends Resource
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
+
+
+        public static function getLabel(): string
+    {
+        return __('index.user.title');
+    }
+    public static function getPluralLabel(): string
+    {
+        return __('index.user.plural');
+    }
 }
