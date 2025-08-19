@@ -3,7 +3,7 @@
 return [
 
     'title' => 'لوحة التحكم',
-
+    
     'actions' => [
 
         'filter' => [
