@@ -18,14 +18,15 @@ use Filament\Tables\Columns\{TextColumn, BadgeColumn};
 use App\Enums\{GenderEnum, GuardianRelationEnum, GraduationStatusEnum, RolesEnum};
 use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Support\Facades\Auth;
+use Filament\Schemas\Schema;
 
 class StudentResource extends Resource
 {
     protected static ?string $model = Student::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema  $form) : Schema
     {
 
         $components = [
